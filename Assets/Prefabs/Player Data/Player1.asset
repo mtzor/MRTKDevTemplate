@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ed6525ab8712b44eaca154bd2bb4395, type: 3}
+  m_Name: Player1
+  m_EditorClassIdentifier: 
+  playerName: Marilena
+  playerID: 0
+  Color: {r: 0.03226051, g: 0.7433963, b: 0.47551233, a: 0}
+  playerType: 0

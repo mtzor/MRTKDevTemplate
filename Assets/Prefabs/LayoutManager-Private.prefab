@@ -1,0 +1,94 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1806825946204148253
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1082400378914875561}
+  - component: {fileID: 7151575914427077065}
+  - component: {fileID: 7637560796867007436}
+  m_Layer: 0
+  m_Name: LayoutManager-Private
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1082400378914875561
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1806825946204148253}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7151575914427077065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1806825946204148253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 4066204970
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+--- !u!114 &7637560796867007436
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1806825946204148253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff404dffdc9c0cf4c9846eb72472730e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  viewPos: {fileID: 0}
+  name: 
+  layout: {fileID: 0}
+  roomLayout: {fileID: 0}
+  isShared: 0
+  roomMenuS: {fileID: 0}
+  roomMenuL: {fileID: 0}
+  roomPrefabs:
+  - {fileID: 5355436889956557271, guid: cd49b4a35587eae46b6c6012c9281499, type: 3}
+  - {fileID: 177223525033722577, guid: 8cecfdf2fba9ce344b5f358e2dbb378e, type: 3}
+  - {fileID: 1888925321601668486, guid: 126d1dcc13ad0cf42b2ffd6f55cdd94b, type: 3}
+  - {fileID: 5826103083709648599, guid: 41073d10d9290614bb977d11a9edfb95, type: 3}
+  - {fileID: 438226755967290988, guid: 4d0ebc76b8705cc40bb5ed0c362e621c, type: 3}
+  - {fileID: 438314034099750988, guid: 9f2b775a2af1c2d4fb739007ba20eec3, type: 3}
+  - {fileID: 5073091342997581170, guid: d304b266f94e9df4b8fce96082da9499, type: 3}
+  - {fileID: 3652128322406636765, guid: a4eba87ddff0e2449b477d4596a76c7f, type: 3}
+  - {fileID: 1853677859500730148, guid: 3fb3ae5b47c5b404b8e997740b823f7b, type: 3}
+  - {fileID: 6507137955660986694, guid: 587d56a71cc28ec4d99e9d3a54b590c8, type: 3}
+  - {fileID: 5585407900329397608, guid: 9cd32696df99164419bf7b762ab015a1, type: 3}
+  - {fileID: 199267054608231500, guid: f59c7b09d7c931e4a8242ea4d2d6bebc, type: 3}
+  - {fileID: 5201442867777200234, guid: 09d8ebffb5a79d247998b2b854c2bb1d, type: 3}
+  - {fileID: 2153460651425056731, guid: 0e293fcc03936d74f9241b6235e6f29e, type: 3}
+  furniturePrefabs: []
+  spawnPos: {fileID: 0}
+  spawnRotY: 180
+  _spawnedRooms: []
