@@ -158,8 +158,10 @@ public override void OnNetworkSpawn()
             }
         }
 
+        GameObject privateViewGameObject = new GameObject("PrivateView");
+        PrivateView layoutPrivate = privateViewGameObject.AddComponent<PrivateView>();
+        layoutPrivate.Initialize(selectedModuleLayouts, layoutContainer);
         // Instantiate and configure the PrivateView (not networked)
-        PrivateView layoutPrivate = new PrivateView(selectedModuleLayouts, layoutContainer);
 
         // Instantiate and configure the SharedView (networked)
         SharedView layoutShared = InstantiateSharedView(selectedModuleLayouts, layoutContainer);
@@ -227,7 +229,9 @@ public override void OnNetworkSpawn()
         }
 
         // Instantiate and configure the PrivateView (not networked)
-        PrivateView layoutPrivate = new PrivateView(selectedModuleLayouts, layoutContainer);
+        GameObject privateViewGameObject = new GameObject("PrivateView");
+        PrivateView layoutPrivate = privateViewGameObject.AddComponent<PrivateView>();
+        layoutPrivate.Initialize(selectedModuleLayouts, layoutContainer);
 
 
         // Instantiate and configure the SharedView (networked)

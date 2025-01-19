@@ -223,7 +223,7 @@ public class VisualizeDwellingSelector : NetworkBehaviour
             moduleName = selectedModule.Substring(0, cloneIndex).Trim(); // Extract name before "(Clone)" and trim any extra spaces
         }
 
-        DialogButtonType answer = await DialogManager.Instance.SpawnDialogWithAsync("Module" + selectedModule + " selected!", "Would you like to view the existing apartment designs ?", "YES", "NO");
+        DialogButtonType answer = await DialogManager.Instance.SpawnDialogWithAsync("Apartment selected!", "Would you like to view the existing apartment designs ?", "YES", "NO");
 
         if (answer == DialogButtonType.Positive)
         {

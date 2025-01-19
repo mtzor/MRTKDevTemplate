@@ -215,7 +215,7 @@ public class CustomizeDwellingSelector : NetworkBehaviour
             moduleName = selectedModule.Substring(0, cloneIndex).Trim(); // Extract name before "(Clone)" and trim any extra spaces
         }
 
-        DialogButtonType answer = await DialogManager.Instance.SpawnDialogWithAsync("Module" + selectedModule + " selected!", "Would you like to confirm your choice ?", "YES", "NO");
+        DialogButtonType answer = await DialogManager.Instance.SpawnDialogWithAsync("Apartment selected!", "Would you like to confirm your choice ?", "YES", "NO");
 
         if (answer == DialogButtonType.Positive)
         {
@@ -249,7 +249,7 @@ public class CustomizeDwellingSelector : NetworkBehaviour
 
     public async Task selectModuleNeutralDialog(string selectedModule)
     {
-        DialogButtonType answer = await DialogManager.Instance.SpawnDialogWithAsync("Module" + selectedModule + " selected!", "Waiting for host to confirm the selection ", "OK");    
+        DialogButtonType answer = await DialogManager.Instance.SpawnDialogWithAsync("Module selected!", "Waiting for host to confirm the selection ", "OK");    
     }
 
 

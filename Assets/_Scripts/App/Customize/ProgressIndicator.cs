@@ -17,13 +17,6 @@ public class ProgressIndicator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            // Perform your desired action here
-            Debug.Log("T key pressed! Performing action...");
-            ToggleProgressIndicator(true,true);
-
-        }
     }
 
     public void ToggleProgressIndicator(bool isShared,bool complete)

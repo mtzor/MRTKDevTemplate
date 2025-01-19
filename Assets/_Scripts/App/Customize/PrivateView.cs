@@ -25,7 +25,7 @@ public class PrivateView :MonoBehaviour, IView
 
     public Transform GetLayoutContainer() { return layoutContainer; }
 
-    public PrivateView(List<Transform> privateItems, Transform layoutTransform)
+    public void Initialize(List<Transform> privateItems, Transform layoutTransform)
     {
         items = privateItems;
         layoutContainer = layoutTransform;
@@ -105,7 +105,8 @@ public class PrivateView :MonoBehaviour, IView
         }
 
         
-        currentItem = Instantiate(items[currentIndex], layoutContainer);
+        Transform item = Instantiate(items[currentIndex], layoutContainer);
+        currentItem = item;
 
         if (CustomizeManager.Instance.PrivatePhase == CustomizeManager.CustomizePhase.Customize_layout)
         {

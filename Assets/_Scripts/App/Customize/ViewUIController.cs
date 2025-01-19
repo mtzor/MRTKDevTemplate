@@ -61,6 +61,8 @@ public class ViewUIController : NetworkBehaviour
         if (currentIView != null)
         {
             currentIView.NextItem();
+
+            Debug.Log("NEXT ITEM PRESSED");
         }
         else { Debug.Log("CurrentView iS NULL"); }
     }
@@ -68,6 +70,7 @@ public class ViewUIController : NetworkBehaviour
     private void OnPreviousItemClicked()
     {
         currentIView.PreviousItem();
+        Debug.Log("PREVIOUS ITEM PRESSED");
     }
 
     public void OnCompareModeToggled()

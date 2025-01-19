@@ -18,12 +18,14 @@ public class TutorialManager : MonoBehaviour
     private bool menuClosed;
     private bool sliderUpdated;
     public bool cubeMoved;
+    public bool cubeRotated;
 
     private CancellationTokenSource _cancellationTokenSource;
     private bool tutorialPaused = false;
     private string lastDialogueTitle;       // Stores the last dialogue's title
     private string lastDialogueMessage;     // Stores the last dialogue's message
 
+    private Quaternion initialRotstion;
     public static TutorialManager Instance
     {
         get
@@ -42,14 +44,20 @@ public class TutorialManager : MonoBehaviour
             return _instance;
         }
     }
-
+    public void CheckCubeRotated()
+    {
+        if(cube.transform.rotation!= initialRotstion)
+        {
+            CubeRotated = true;
+        }
+    }
     void Start()
     {
         cancelTutorialButton.gameObject.SetActive(false);
         cube.SetActive(false);
 
         cancelTutorialButton.OnClicked.AddListener(() => { cancelTutorial(); });
-
+        initialRotstion = cube.transform.localRotation;
         //runTutorial();
     }
 
@@ -102,7 +110,7 @@ public class TutorialManager : MonoBehaviour
         try
         {
             await SpawnAndSaveDialog(
-                "Welcome to the application tutorial!",
+                "Welcome to the AR-Apt application tutorial!",
                 "In this tutorial, we will show you the main gestures needed to navigate the app. It's fairly easy!",
                 "PRESS TO CONTINUE",
                 token
@@ -122,9 +130,9 @@ public class TutorialManager : MonoBehaviour
 
             await WaitForCondition(() => handRemoved, token);
 
-            await SpawnAndSaveNeutralDialog("Use the bar on the bottom to place it in your view.",
-                "Give it a try now!",
-                token);
+            await SpawnAndSaveNeutralDialog("Let's learn our first gesture: The pinch Gesture!",
+                "We will try pinching to move the HandMenu.\r\n 1. Hold up your arm and connect your pointer with your thumb to grab the bar on the bottom of the HandMenu.\r\n " +
+                "2.Move and let go, to place it in your view. Give it a try now!", token);
 
             await WaitForCondition(() => menuManipulated, token);
 
@@ -142,14 +150,6 @@ public class TutorialManager : MonoBehaviour
 
             await WaitForCondition(() => !menuToggled, token);
 
-            await SpawnAndSaveNeutralDialog("Now on to the next Gesture! The pinch Gesture:",
-                "We will try pinching to adjust the app volume.\r\n 1. Hold up your other arm and connect your pointer with your thumb to grab the volume knob. \r\n 2. Move your Hand Up/Down to adjust the app Volume.",
-                token);
-
-            await Task.Delay(1000, token);
-
-            await WaitForCondition(() => sliderUpdated, token);
-
             await SpawnAndSaveNeutralDialog("Well done!", "You can now close the hand menu.", token);
 
             await WaitForCondition(() => menuClosed, token);
@@ -161,6 +161,13 @@ public class TutorialManager : MonoBehaviour
             cube.SetActive(true);
 
             await WaitForCondition(() => cubeMoved, token);
+
+
+            await SpawnAndSaveNeutralDialog("Well done! Let's rotate the cube now.",
+                " 1. Point at hte object with your index finger \r\n2. Pinch and rotate your hand.",
+                token);
+
+            await WaitForCondition(() => cubeRotated, token);
 
             await SpawnAndSaveDialog(
                 "Well done! The tutorial is now complete.",
@@ -224,4 +231,6 @@ public class TutorialManager : MonoBehaviour
     public bool MenuClosed { get => menuClosed; set => menuClosed = value; }
     public bool SliderUpdated { get => sliderUpdated; set => sliderUpdated = value; }
     public bool CubeMoved { get => cubeMoved; set => cubeMoved = value; }
+
+    public bool CubeRotated {  get => cubeRotated; set => cubeRotated = value; }
 }
