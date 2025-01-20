@@ -23,6 +23,10 @@ public class ViewManager : MonoBehaviour
     [SerializeField] private PressableButton sharedViewToggle;
     [SerializeField] private TMP_Text sharedViewText;
 
+    [SerializeField] private TMP_Text P1_text;
+
+    [SerializeField] private TMP_Text P2_text;
+
     [SerializeField] private GameObject privateSceneHelper;
     [SerializeField] private GameObject sharedSceneHelper;
     [SerializeField] private GameObject simpleSceneHelper;
@@ -199,6 +203,7 @@ public class ViewManager : MonoBehaviour
                     finalizeChoiceBtn.gameObject.SetActive(true);
                     CustomizeManager.Instance.ToggleCustomize_P1_UI(true);
                     LoadingManager.Instance.DisableLoadingScreen();
+                    currentIVew.NextItem();
 
                 }
                 else if (CustomizeManager.Instance.SharedPhase == CustomizeManager.CustomizePhase.Choose_room_layout )
@@ -226,6 +231,8 @@ public class ViewManager : MonoBehaviour
                         CustomizeManager.Instance.SetupCustomizeLayout(!isShared);
                         LoadingManager.Instance.DisableLoadingScreen();
 
+                        P1_text.gameObject.SetActive(false);
+                        P2_text.gameObject.SetActive(true);
                         isPrivateComplete = false;
                         isSharedComplete= false;
 
@@ -233,7 +240,7 @@ public class ViewManager : MonoBehaviour
 
                     }
                 }
-                else if (CustomizeManager.Instance.PrivatePhase == CustomizeManager.CustomizePhase.Customize_layout)
+                else if (CustomizeManager.Instance.SharedPhase == CustomizeManager.CustomizePhase.Customize_layout)
                 {
                     if (!isSharedComplete)
                     {
@@ -273,6 +280,7 @@ public class ViewManager : MonoBehaviour
                     finalizeChoiceBtn.gameObject.SetActive(true);
                     CustomizeManager.Instance.ToggleCustomize_P1_UI(true);
                     Debug.Log("Setting up room layouts");
+                    currentIVew.NextItem();
                 }
                 else if (CustomizeManager.Instance.PrivatePhase == CustomizeManager.CustomizePhase.Choose_room_layout)
                 {
@@ -300,7 +308,9 @@ public class ViewManager : MonoBehaviour
                         CustomizeManager.Instance.SetupCustomizeLayout(!isShared);
                         LoadingManager.Instance.DisableLoadingScreen();
                         //next previous and compare button off
+                        P1_text.gameObject.SetActive(false);
 
+                        P2_text.gameObject.SetActive(true);
                         isPrivateComplete = false;
                         isSharedComplete = false;
 

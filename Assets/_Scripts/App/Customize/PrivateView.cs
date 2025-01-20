@@ -181,6 +181,11 @@ public class PrivateView :MonoBehaviour, IView
             CustomizeManager.Instance.currentLayoutManager.DespawnAllRooms();
             Destroy(currentItem.gameObject);
         }
+        if (currentItem != null)
+        {
+            Destroy(currentItem.gameObject);
+        }
+
         DialogButtonType answer = await DialogManager.Instance.SpawnDialogWithAsync("Layout selected!", "Would you like to confirm your choice ?", "YES", "NO");
 
         if (answer == DialogButtonType.Positive)
@@ -204,6 +209,7 @@ public class PrivateView :MonoBehaviour, IView
             Debug.Log("NEGATIVE");
             ViewManager.Instance.finalizeChoiceBtn.gameObject.SetActive(true);
             selectedIndex = -1;
+            ShowCurrentItem();
         }
     }
 

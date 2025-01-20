@@ -7,6 +7,9 @@ using MixedReality.Toolkit.UX;
 public class TutorialManager : MonoBehaviour
 {
     [SerializeField] PressableButton cancelTutorialButton;
+
+    [SerializeField] GameObject chevron;
+
     private static TutorialManager _instance;
 
     public GameObject cube;
@@ -24,7 +27,7 @@ public class TutorialManager : MonoBehaviour
     private bool tutorialPaused = false;
     private string lastDialogueTitle;       // Stores the last dialogue's title
     private string lastDialogueMessage;     // Stores the last dialogue's message
-
+  
     private Quaternion initialRotstion;
     public static TutorialManager Instance
     {
@@ -150,9 +153,14 @@ public class TutorialManager : MonoBehaviour
 
             await WaitForCondition(() => !menuToggled, token);
 
+            chevron.gameObject.SetActive(true);
+
             await SpawnAndSaveNeutralDialog("Well done!", "You can now close the hand menu.", token);
+            
 
             await WaitForCondition(() => menuClosed, token);
+
+            chevron.gameObject.SetActive(false);
 
             await SpawnAndSaveNeutralDialog("Well done! Let's now see far interaction.",
                 "When an object is not close enough, you can interact with it by:\r\n 1. Pointing at it with your index finger \r\n2. Pinching \r\n Try to move this cube from afar.",
