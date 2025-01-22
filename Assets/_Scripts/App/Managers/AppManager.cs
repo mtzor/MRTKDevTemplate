@@ -4,12 +4,18 @@ using System.Threading.Tasks;
 using UnityEngine;
 using MixedReality.Toolkit.UX;
 using Unity.Netcode;
-
+using TMPro;
 
 public class AppManager : MonoBehaviour
 {
     private static AppManager _instance;
 
+    [SerializeField] private GameObject keyboard;
+    [SerializeField] private GameObject inputField;
+
+    [SerializeField] private  TMP_InputField nameText;
+
+    [SerializeField] private GameObject colorInputUI;
     public AppPhase currentPhase;
     private AppPhase previousPhase;
 
@@ -17,6 +23,8 @@ public class AppManager : MonoBehaviour
     public enum AppPhase
     {
         Startup,
+        Name_Input,
+        Color_Input,
         Role_Choice,
         MainMenu,
         Tutorial,
@@ -114,8 +122,44 @@ public class AppManager : MonoBehaviour
                 }
                 else
                 {
-                    UpdatePhase(AppPhase.Role_Choice);//calling update phase for the tutorial
+                    UpdatePhase(AppPhase.Name_Input);//calling update phase for the tutorial
                 }
+                break;
+
+            case AppPhase.Name_Input:
+                // Perform startup tasks
+                currentPhase = AppPhase.Name_Input;
+
+                NameInputUI(true);
+
+                 while (!LobbyManager.Instance.nameChosen)
+                 {
+                     await Task.Delay(200);
+                 }
+                Debug.Log("NAME TEXT" + nameText.text);
+                string nameCache=nameText.text;
+                DialogButtonType result1 = await ConfirmName(nameText.text);
+
+                 if (result1 == DialogButtonType.Positive)
+                 {
+                    LobbyManager.Instance.SetPlayerName(nameCache);
+                     UpdatePhase(AppPhase.Color_Input);//calling update phase for the tutorial
+                 }
+                 else
+                 {
+                    LobbyManager.Instance.SetNameChosen(false);
+                    UpdatePhase(AppPhase.Name_Input);//calling update phase for the tutorial
+                        
+                 }
+           
+                break;
+
+            case AppPhase.Color_Input:
+                // Perform startup tasks
+                currentPhase = AppPhase.Color_Input;
+
+                colorInputUI.SetActive(true);
+
                 break;
 
             case AppPhase.Role_Choice:
@@ -539,6 +583,38 @@ public class AppManager : MonoBehaviour
         return result;
     }
 
+    public async Task<DialogButtonType> ConfirmName(string name)
+    {
+        NameInputUI(false);
+        DialogButtonType result = await DialogManager.Instance.SpawnDialogWithAsync("Hello "+name, "Would you like to confirm your name?", "YES", "NO");
+        return result;
+    }
+
+    public void FinalizeColorBtnPressed()
+    {
+        FinalizeColorAsync();
+    }
+    public async Task FinalizeColorAsync()
+    {
+        DialogButtonType result2 = await ConfirmColor();
+
+        if (result2 == DialogButtonType.Positive)
+        {
+            colorInputUI.SetActive(false);
+            UpdatePhase(AppPhase.Role_Choice);//calling update phase for the tutorial
+        }
+        else
+        {
+            UpdatePhase(AppPhase.Color_Input);//calling update phase for the tutorial
+        }
+    }
+    public async Task<DialogButtonType> ConfirmColor()
+    {
+        DialogButtonType result = await DialogManager.Instance.SpawnDialogWithAsync("Color chosen.", "Would you like to confirm your your choice?", "YES", "NO");
+
+        return result;
+    }
+
     public async Task<DialogButtonType> RoleChoice()
     {
 
@@ -550,5 +626,11 @@ public class AppManager : MonoBehaviour
         // Log completion
         Debug.Log("Tutorial completed, returning to Role Choice.");
         UpdatePhase(AppPhase.Role_Choice);
+    }
+
+    public void NameInputUI(bool isActive)
+    {
+        keyboard.SetActive(isActive);
+        inputField.SetActive(isActive); 
     }
 }

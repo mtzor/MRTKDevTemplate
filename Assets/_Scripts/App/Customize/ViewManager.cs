@@ -20,6 +20,8 @@ public class ViewManager : MonoBehaviour
 
     [SerializeField] public PressableButton finalizeChoiceBtn;
 
+    [SerializeField] private GameObject sharedViewUI;
+
     [SerializeField] private PressableButton sharedViewToggle;
     [SerializeField] private TMP_Text sharedViewText;
 
@@ -64,7 +66,10 @@ public class ViewManager : MonoBehaviour
             return _instance;
         }
     }
-
+    public void MoveSharedView()
+    {
+        sharedViewUI.transform.position = sharedViewUI.transform.position + new Vector3(0, 0.13f, 0);
+    }
     public void SetPrivateView(IView view)
     {
         privateView = view;
@@ -92,6 +97,11 @@ public class ViewManager : MonoBehaviour
         currentIVew.DestroyCurrentItem();
 
         isShared = !isShared;
+
+        if (CustomizeManager.Instance.currentLayoutManager != null)
+        {
+            CustomizeManager.Instance.currentLayoutManager.CloseOpenMenu();
+        }
 
         // Handle view switch externally if necessary
         if (isShared) {
@@ -237,6 +247,7 @@ public class ViewManager : MonoBehaviour
                         isSharedComplete= false;
 
                         SetupCustomizeP2Interface();
+                        MoveSharedView();
 
                     }
                 }
@@ -315,6 +326,7 @@ public class ViewManager : MonoBehaviour
                         isSharedComplete = false;
 
                         SetupCustomizeP2Interface();
+                        MoveSharedView();
                     }
                 }
                 else if (CustomizeManager.Instance.PrivatePhase == CustomizeManager.CustomizePhase.Customize_layout)

@@ -144,6 +144,7 @@ public class LobbyListUI : MonoBehaviour {//class implementing  create /join lob
     }
 
     private bool _lobbyCreated=false;
+    /*
     public void CreateCustomizeLobbyButton(string name)
     {
         if (!lobbyBtns.Contains(name))
@@ -158,6 +159,30 @@ public class LobbyListUI : MonoBehaviour {//class implementing  create /join lob
         lobbyListSingleUI.GetComponent<PressableButton>().OnClicked.AddListener(CreateLobbyButtonClick);
         lobbyListSingleUI.GetComponent<PressableButton>().OnClicked.AddListener(() => { SaveSystem.LastLobbyName = name; });
 
+    }*/
+
+    public void CreateCustomizeLobbyButton(string name)
+    {
+        if (!lobbyBtns.Contains(name)) // Ensure the name is not already added
+        {
+            lobbyBtns.Add(name);
+        }
+
+        Debug.Log("Lobby name: " + name);
+
+        Transform lobbySingleTransform = Instantiate(lobbySingleTemplate, container);
+        lobbySingleTransform.gameObject.SetActive(true);
+
+        LobbyListSingleUI lobbyListSingleUI = lobbySingleTransform.GetComponent<LobbyListSingleUI>();
+        lobbyListSingleUI.UpdateLobby(name);
+
+        PressableButton button = lobbyListSingleUI.GetComponent<PressableButton>();
+
+        // Capture the current value of `name` in a local variable
+        string capturedName = name;
+
+        button.OnClicked.AddListener(CreateLobbyButtonClick);
+        button.OnClicked.AddListener(() => { SaveSystem.LastLobbyName = capturedName; });
     }
     private void Hide() {
         gameObject.SetActive(false);

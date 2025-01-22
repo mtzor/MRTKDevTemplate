@@ -53,6 +53,11 @@ public class LayoutManager : NetworkBehaviour
         roomLayout = layout;
     }
 
+    public void CloseOpenMenu()
+    {
+        openMenu.gameObject.SetActive(false);
+    }
+
     [ServerRpc(RequireOwnership = false)]
     public void DisplayLayoutModelServerRPC()
     {

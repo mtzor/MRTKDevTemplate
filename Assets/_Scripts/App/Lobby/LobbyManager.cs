@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
@@ -12,7 +13,7 @@ using UnityEngine;
 public class LobbyManager : MonoBehaviour {
 
     [SerializeField] private PlayerDataScriptable[] playerDatas= new PlayerDataScriptable[2];
-
+    
     public static LobbyManager Instance { get; private set; }
 
 
@@ -93,7 +94,10 @@ public class LobbyManager : MonoBehaviour {
     private int _playerID;
     private string _lobbyName;
     [SerializeField] private int currPlayer;
+    public bool nameChosen=false;
+    public bool colorChosen=false;
 
+    public void SetNameChosen(bool value) { nameChosen = value; }
     public void SetPlayerType(PlayerType value) {
         playerType=value;
     }
@@ -113,10 +117,8 @@ public class LobbyManager : MonoBehaviour {
     {
         Instance = this;
 
-        string playername= GetPlayerInfo();      
-
         // Authenticate using the retrieved or newly generated Player Name
-        await Authenticate(playerName);
+        //await Authenticate(playerName);
     }
 
     #region Load/Store PlayerName
@@ -126,7 +128,66 @@ public class LobbyManager : MonoBehaviour {
         return playerDatas[playerID];   
     }
 
-    public string GetPlayerInfo()
+    public void SetPlayerColor(Color colorIndex)
+    {
+        playerDatas[_playerID].Color=colorIndex;
+    }
+
+    public void SetPlayerName(string name)
+    {
+        string correctedName= CorrectPlayerName(name);
+
+        playerDatas[_playerID].playerName = correctedName;
+
+        Authenticate(correctedName);
+
+        string playername = GetPlayerInfo();
+    }
+    public static string CorrectPlayerName(string playerName)
+    {
+        // Define a default name if no valid word is found
+        const string defaultName = "Player";
+
+        // Ensure the input is not null and trim unnecessary spaces
+        if (string.IsNullOrWhiteSpace(playerName))
+        {
+            return defaultName;
+        }
+
+        // Use a regex to extract the first valid word (letters and numbers only)
+        Match match = Regex.Match(playerName, @"[a-zA-Z0-9_\-]+");
+
+        // Debugging output for better insight
+        UnityEngine.Debug.Log($"Input Name: {playerName}");
+        UnityEngine.Debug.Log($"Regex Match Found: {match.Success}");
+        UnityEngine.Debug.Log($"Matched Value: {match.Value}");
+
+        // If a valid word is found, sanitize and return it
+        if (match.Success)
+        {
+            string validWord = match.Value;
+
+            // Ensure the word meets length requirements (3 to 20 characters)
+            if (validWord.Length < 3)
+            {
+                // Pad with zeros if too short
+                validWord = validWord.PadRight(3, '0');
+            }
+            else if (validWord.Length > 20)
+            {
+                // Trim to the maximum allowed length
+                validWord = validWord.Substring(0, 20);
+            }
+
+            return validWord;
+        }
+
+        // If no valid word is found, return the default name
+        return defaultName;
+    }
+
+
+public string GetPlayerInfo()
     {
         /*
         // Try to load the Player Name from PlayerPrefs

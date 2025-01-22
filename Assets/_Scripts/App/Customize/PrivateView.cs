@@ -17,9 +17,7 @@ public class PrivateView :MonoBehaviour, IView
     private Transform compareItemInstance;
 
     private Transform currentItem;
-
     private int selectedIndex;
-
 
     private Transform layoutContainer;
 
@@ -171,9 +169,6 @@ public class PrivateView :MonoBehaviour, IView
         // Refresh the view
         ShowCurrentItem();
     }
-
-
-
     public async Task FinalizeChoice()
     {
         if (CustomizeManager.Instance.PrivatePhase == CustomizeManager.CustomizePhase.Customize_layout)
@@ -212,7 +207,6 @@ public class PrivateView :MonoBehaviour, IView
             ShowCurrentItem();
         }
     }
-
     public void SetSelectedIndex(int value)
     {
             selectedIndex= value;
@@ -221,7 +215,6 @@ public class PrivateView :MonoBehaviour, IView
     {
         return selectedIndex;
     }
-
     public void ReportSharedViewState(bool state)
     {
 
