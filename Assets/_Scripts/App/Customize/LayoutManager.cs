@@ -55,7 +55,10 @@ public class LayoutManager : NetworkBehaviour
 
     public void CloseOpenMenu()
     {
-        openMenu.gameObject.SetActive(false);
+        if (openMenu != null)
+        {
+            openMenu.gameObject.SetActive(false);
+        }
     }
 
     [ServerRpc(RequireOwnership = false)]

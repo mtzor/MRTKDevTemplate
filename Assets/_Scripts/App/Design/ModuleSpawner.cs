@@ -65,36 +65,68 @@ public class ModuleSpawner : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void RequestSpawnModuleServerRpc(int moduleIndex, ulong clientId)
     {
-        Debug.Log("Server spawning module: " + moduleIndex + " for client: " + clientId);
+        Debug.Log($"Server spawning module: {moduleIndex} for client: {clientId}");
 
-        float yval =  0.03f;
-
-        Debug.Log("Spawning position: " + yval+ "Floor No:"+DesignNetworkSyncScript.Instance.floorNo);
+        float yval = 0.03f;
 
         if (DesignNetworkSyncScript.Instance.FirstModuleOfFloor)
         {
-            Debug.Log("First Module of the Floor No:" + DesignNetworkSyncScript.Instance.floorNo);
+            Debug.Log($"First Module of Floor No: {DesignNetworkSyncScript.Instance.floorNo}");
             moduleContainer.transform.position += new Vector3(0, yval, 0);
             DesignNetworkSyncScript.Instance.FirstModuleOfFloor = false;
         }
+
         // Instantiate the module prefab
-         moduleInstance = Instantiate(modulePrefabs[moduleIndex], moduleContainer);
+        var moduleInstance = Instantiate(modulePrefabs[moduleIndex], moduleContainer);
 
         // Spawn the object across the network
         moduleInstance.GetComponent<NetworkObject>().Spawn(true);
 
+        // Set the FloorNo value on the module
         moduleInstance.GetComponent<Module>().FloorNo.Value = DesignNetworkSyncScript.Instance.floorNo.Value;
 
+        // Add the module to the list of spawned modules
         spawnedModules.Add(moduleInstance.gameObject);
-        // Optionally transfer ownership to the client who requested the spawn
-        //Debug.Log("Owner Client ID: " +moduleInstance.GetComponent<NetworkObject>().OwnerClientId);
 
-        if (moduleInstance.GetComponent<NetworkObject>().OwnerClientId != clientId)
+        // Transfer ownership to the client
+        var networkObject = moduleInstance.GetComponent<NetworkObject>();
+        if (networkObject.OwnerClientId != clientId)
         {
-            moduleInstance.GetComponent<NetworkObject>().ChangeOwnership(clientId);
+            networkObject.ChangeOwnership(clientId);
+            Debug.Log($"Ownership of module {moduleIndex} transferred to Client ID: {clientId}");
         }
+        else
+        {
+            Debug.Log($"Client ID: {clientId} already owns the module.");
+        }
+
+        Debug.Log($"Owner of the module after spawn: {networkObject.OwnerClientId}");
+
+
+        // Set the isKinematic property on the client
+        SetIsKinematicClientRPC(networkObject.NetworkObjectId, true);
     }
 
 
+    [ClientRpc(RequireOwnership = false)]
+    public void SetIsKinematicClientRPC(ulong networkObjectId, bool isKinematic)
+    {
+        // Find the network object by ID
+        var networkObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[networkObjectId];
+
+        if (networkObject != null)
+        {
+            var rb = networkObject.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.isKinematic = isKinematic;
+                Debug.Log($"Set Rigidbody isKinematic to {isKinematic} on Client for object {networkObjectId}");
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"NetworkObject with ID {networkObjectId} not found on client.");
+        }
+    }
 
 }

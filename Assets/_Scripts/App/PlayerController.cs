@@ -97,7 +97,7 @@ public class PlayerController : NetworkBehaviour
         Quaternion adjustedRotation = Quaternion.Euler(0f, bodyYaw, 0f);
 
         networkTransform.transform.rotation = adjustedRotation;
-        networkTransform.transform.position = Camera.main.transform.position - new Vector3(0.67f, -0.6f, -0.1f);
+        networkTransform.transform.position = Camera.main.transform.position - new Vector3(0.67f, -0.6f, +0.1f);
     }
 
     public void StartWalking()

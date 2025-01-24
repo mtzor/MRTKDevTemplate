@@ -30,7 +30,7 @@ public class VisualizeModule : NetworkBehaviour
             Debug.Log("Stored player ID: " + storedPlayerID);
         }
 
-        localPlayerColor = LobbyManager.Instance.GetPlayerData((int)NetworkManager.Singleton.LocalClientId).Color;
+        localPlayerColor = LobbyManager.Instance.GetPlayerColor();
         Debug.Log("Player ID" + NetworkManager.Singleton.LocalClientId + "PlayerName: " + LobbyManager.Instance.GetPlayerData((int)NetworkManager.Singleton.LocalClientId).playerName);
     }
 

@@ -30,7 +30,9 @@ public class InteractableModule : NetworkBehaviour
             Debug.Log("Stored player ID: " + storedPlayerID);
         }
 
-        localPlayerColor= LobbyManager.Instance.GetPlayerData((int)NetworkManager.Singleton.LocalClientId).Color;
+        localPlayerColor= LobbyManager.Instance.GetPlayerColor();
+
+        Debug.Log("LOCAL PLAYER COLOR"+localPlayerColor);
         Debug.Log("Player ID"+ NetworkManager.Singleton.LocalClientId +"PlayerName: "+ LobbyManager.Instance.GetPlayerData((int)NetworkManager.Singleton.LocalClientId).playerName);
     }
 

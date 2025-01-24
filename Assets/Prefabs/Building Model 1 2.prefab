@@ -1584,7 +1584,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1157232036968484111}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.56, y: -0.01000011, z: -0.089999996}
+  m_LocalPosition: {x: -0.511, y: -0.01000011, z: -0.089999996}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -6133,7 +6133,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4121152156034152721}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -12983,6 +12983,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   buildingTransform: {fileID: 284788655336810317}
   NextPhaseButton: {fileID: 6733807668524562433}
+  P12_text: {fileID: 1214219061729772104}
   manipulationBar: {fileID: 6555213838923489310}
   floors:
   - {fileID: 9197817287766919219}
@@ -16032,7 +16033,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8282810301680004969, guid: 2ecf69135c4d2074f94666f929c84336, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8504942090448446140, guid: 2ecf69135c4d2074f94666f929c84336, type: 3}
       propertyPath: m_Size.x

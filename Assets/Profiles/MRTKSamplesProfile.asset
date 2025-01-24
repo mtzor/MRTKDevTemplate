@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isCustomProfile: 0
   loadedSubsystems:
+  - reference: MixedReality.Toolkit.Input.MRTKHandsAggregatorSubsystem, MixedReality.Toolkit.Input
   - reference: MixedReality.Toolkit.Input.XRSDKHandsSubsystem, MixedReality.Toolkit.Input
   - reference: MixedReality.Toolkit.Input.UnityHandsSubsystem, MixedReality.Toolkit.Input
-  - reference: MixedReality.Toolkit.Input.MRTKHandsAggregatorSubsystem, MixedReality.Toolkit.Input
   - reference: MixedReality.Toolkit.Diagnostics.MRTKPerformanceStatsSubsystem, MixedReality.Toolkit.Diagnostics
   - reference: MixedReality.Toolkit.Speech.Windows.WindowsDictationSubsystem, MixedReality.Toolkit.Speech.Windows
   - reference: MixedReality.Toolkit.Speech.Windows.WindowsKeywordRecognitionSubsystem,

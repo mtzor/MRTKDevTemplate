@@ -365,14 +365,6 @@ public class AppManager : MonoBehaviour
                 // Handle tutorial logic
                 currentPhase = AppPhase.Design_P1_Host;
 
-
-                LoadingManager.Instance.SetLoadingText("Loading Design Interface");
-                LoadingManager.Instance.EnableLoadingScreen();
-
-                await Task.Delay(3000);
-
-                LoadingManager.Instance.DisableLoadingScreen();
-
                 Debug.Log("Design_p1 PHASE");
 
                 //TriggerAppPhaseChange();
@@ -386,10 +378,6 @@ public class AppManager : MonoBehaviour
                 LoadingManager.Instance.SetLoadingText("Waiting for host to create a new Design.");
                 LoadingManager.Instance.EnableLoadingScreen();
 
-                await Task.Delay(3000);
-
-                LoadingManager.Instance.DisableLoadingScreen();
-
                 break;
 
             case AppPhase.Design_P12_Host:
@@ -402,6 +390,8 @@ public class AppManager : MonoBehaviour
             case AppPhase.Design_P12:
                 // Handle tutorial logic
                 currentPhase = AppPhase.Design_P12;
+
+                LoadingManager.Instance.DisableLoadingScreen();
 
                 TriggerAppPhaseChange();
                 break;

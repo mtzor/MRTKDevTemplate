@@ -132,9 +132,13 @@ public class LobbyManager : MonoBehaviour {
     {
         playerDatas[_playerID].Color=colorIndex;
     }
-
+    public Color GetPlayerColor()
+    {
+        return playerDatas[_playerID].Color;
+    }
     public void SetPlayerName(string name)
     {
+        _playerID=currPlayer;
         string correctedName= CorrectPlayerName(name);
 
         playerDatas[_playerID].playerName = correctedName;

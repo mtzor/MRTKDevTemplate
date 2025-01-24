@@ -2,6 +2,7 @@ using MixedReality.Toolkit.UX;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using TMPro;
 using Unity.Netcode;
 using Unity.Services.Lobbies.Models;
 //using Unity.VisualScripting;
@@ -13,6 +14,7 @@ public class DesignNetworkSyncScript : NetworkBehaviour // Implement IDisposable
 
     [SerializeField] Transform buildingTransform;
     [SerializeField] private GameObject NextPhaseButton;
+    [SerializeField] private TMP_Text P12_text;
     [SerializeField] private GameObject manipulationBar;
     [SerializeField] private GameObject[] floors = new GameObject[4];
     [SerializeField] private GameObject buildingHollow;
@@ -88,11 +90,24 @@ public class DesignNetworkSyncScript : NetworkBehaviour // Implement IDisposable
             placedModules = new NetworkList<ModuleData>();
         }
         */
-        floorNo.Value = 0;
+        if (IsServer)
+        {
+            floorNo.Value = 0;
+        }
         floorNo.OnValueChanged += OnFloorUpdate;
     }
 
     // Properly handling the list changes
+
+
+    public void ToggleNextPhaseBtn(bool toggle)
+    {
+        NextPhaseButton.gameObject.SetActive(toggle);
+    }
+    public void ToggleP12Text(bool toggle)
+    {
+        P12_text.gameObject.SetActive(toggle);
+    }
 
     private int currentCoveredArea = 0;
 

@@ -2,6 +2,9 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using static AppManager;
+using MixedReality.Toolkit.UX;
+using TMPro;
+using System.Runtime.ConstrainedExecution;
 
 public class UIManager : MonoBehaviour
 {
@@ -9,6 +12,10 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private List<GameObject> uiElements;  // List of UI elements
     [SerializeField] private List<GameObject> sceneHelpers;   // List of scene helpers
+
+    [SerializeField] private PressableButton createBuildingBtn;   // List of scene helpers
+    [SerializeField] private TMP_Text createBuildingText;   // List of scene helpers
+
     private Dictionary<string, GameObject> uiElementsDict;
     private Dictionary<string, GameObject> sceneHelperElementsDict;
 
@@ -203,6 +210,8 @@ public class UIManager : MonoBehaviour
             case AppManager.AppPhase.Design_P1:
                 HideAll();
                 Show("Design_P1 UI");
+                createBuildingBtn.gameObject.SetActive(false);
+                createBuildingText.gameObject.SetActive(false);
                 currentInterface = "Design_P1 UI";
 
                 break;
@@ -212,6 +221,8 @@ public class UIManager : MonoBehaviour
                 Show("Design_P1 UI");
                 currentInterface = "Design_P1 UI";
 
+                createBuildingBtn.gameObject.SetActive(true);
+                createBuildingText.gameObject.SetActive(true);
                 break;
 
             case AppManager.AppPhase.Design_P12:
@@ -223,6 +234,7 @@ public class UIManager : MonoBehaviour
                 currentInterface = "Design_P1 UI ";
 
                 UpdateSceneHelper("Design P1");
+                DesignNetworkSyncScript.Instance.ToggleNextPhaseBtn(false);
 
                 break;
 
@@ -232,6 +244,7 @@ public class UIManager : MonoBehaviour
 
                 AddSceneHelpers();
 
+                DesignNetworkSyncScript.Instance.ToggleNextPhaseBtn(true);
                 currentInterface = "Design_P1 UI Host";
 
                 UpdateSceneHelper("Design P1 Host");
@@ -244,6 +257,8 @@ public class UIManager : MonoBehaviour
                 currentInterface = "Design_P2 UI";
 
                 UpdateSceneHelper("Design P2");
+
+                DesignNetworkSyncScript.Instance.ToggleP12Text(false);
                 break;
 
             case AppManager.AppPhase.Design_P2_Host:
@@ -253,6 +268,8 @@ public class UIManager : MonoBehaviour
                 AddSceneHelpers();
 
                 currentInterface = "Design_P2 UI Host";
+
+                DesignNetworkSyncScript.Instance.ToggleP12Text(true);
 
                 UpdateSceneHelper("Design P2 Host");
                 break;
