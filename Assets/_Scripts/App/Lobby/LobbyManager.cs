@@ -145,7 +145,7 @@ public class LobbyManager : MonoBehaviour {
 
         Authenticate(correctedName);
 
-        string playername = GetPlayerInfo();
+        playerName = GetPlayerInfo();
     }
     public static string CorrectPlayerName(string playerName)
     {

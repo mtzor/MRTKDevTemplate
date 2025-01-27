@@ -8,10 +8,10 @@ using TMPro;
 
 public class AppManager : MonoBehaviour
 {
-    private static AppManager _instance;
-
     [SerializeField] private GameObject keyboard;
     [SerializeField] private GameObject inputField;
+    private static AppManager _instance;
+
 
     [SerializeField] private  TMP_InputField nameText;
 

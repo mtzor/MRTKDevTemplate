@@ -12,6 +12,7 @@ public static class SaveSystem
     private static string DesignFilesListKey = "saved_design_files";
     private static string CustomizeFilesListKey = "saved_customize_files";
     private static string RatingFilesListKey = "saved_rating_files";
+    private static string NoteFilesListKey = "saved_note_files";
 
     private static string currentFile;
     private static string _lastLobbyName;
@@ -72,6 +73,16 @@ public static class SaveSystem
         await AddFileNameToCustomizeFilesListAsync(key);
     }
 
+    public static async Task SaveNoteFileName(string mode, string playerName, string aptName)
+    {
+        string fileName = LobbyManager.Instance.GetLobbbyName();
+        string key = $"{fileName}_{aptName}_{playerName}_{mode}";
+        key = SanitizeKey(key);
+
+
+        await AddFileNameToNoteFilesListAsync(key);
+    }
+
     public static async Task SaveRoomInfoAsync(string playerName, int aptId, string aptName, int[] choices)
     {
         RoomInfo roomInfo = new RoomInfo(aptId, choices[0], choices[1]);
@@ -96,7 +107,17 @@ public static class SaveSystem
 
         currentFile = key;
     }
+    public static async Task SaveNoteDataListAsync(string mode,List<NoteData> noteDataList, string playerName, string aptName)
+    {
+        string fileName = LobbyManager.Instance.GetLobbbyName();
+        string key = $"{fileName}_{aptName}_{playerName}_{mode}_NoteData";
+        key = SanitizeKey(key);
 
+        string noteDataListJson = JsonUtility.ToJson(new NoteDataListWrapper(noteDataList));
+        await _cloudStorage.SaveDataAsync(key, noteDataListJson);
+
+        currentFile = key;
+    }
     public static async Task SaveDesignRatingAsync(string playerName, string aptName, int[] ratings)
     {
         RatingInfo ratingInfo = new RatingInfo(aptName, ratings);
@@ -222,6 +243,22 @@ public static class SaveSystem
 
             // Save the updated list back to the cloud
             await _cloudStorage.SaveDataAsync(CustomizeFilesListKey, allFiles);
+        }
+    }
+
+    private static async Task AddFileNameToNoteFilesListAsync(string fileName)
+    {
+        // Load the existing list of file names from the cloud
+        string allFiles = await _cloudStorage.LoadDataAsync(NoteFilesListKey) ?? "";
+
+        // Check if the fileName is not already in the list
+        if (!allFiles.Contains(fileName))
+        {
+            // Append the new fileName to the list
+            allFiles += fileName + "\n";
+
+            // Save the updated list back to the cloud
+            await _cloudStorage.SaveDataAsync(NoteFilesListKey, allFiles);
         }
     }
     private static async Task AddFileNameToRatingFilesListAsync(string fileName)
@@ -350,7 +387,51 @@ private static string ExtractLobbyNameFromPath(string filePath)
 
         Debug.Log("All customize lobbies loaded.");
     }
+
+    public static async Task<List<NoteData>> LoadNotesByModeAsync(string mode, string apartmentName)
+    {
+        // Load all saved note file paths from the cloud
+        string allFiles = await _cloudStorage.LoadDataAsync(NoteFilesListKey) ?? "";
+        List<NoteData> filteredNotes = new List<NoteData>();
+
+        foreach (string fileName in allFiles.Split('\n'))
+        {
+            if (string.IsNullOrEmpty(fileName)) continue;
+
+            // Filter based on mode and apartmentName
+            if (fileName.Contains(mode) && fileName.Contains(apartmentName))
+            {
+                string key = $"{fileName}_NoteData";
+                string noteDataJson = await _cloudStorage.LoadDataAsync(key);
+
+                if (!string.IsNullOrEmpty(noteDataJson))
+                {
+                    NoteDataListWrapper wrapper = JsonUtility.FromJson<NoteDataListWrapper>(noteDataJson);
+                    if (wrapper?.NoteDataList != null)
+                    {
+                        filteredNotes.AddRange(wrapper.NoteDataList);
+                    }
+                }
+            }
+        }
+
+        Debug.Log($"Loaded {filteredNotes.Count} notes for mode: {mode}, apartment: {apartmentName}");
+        return filteredNotes;
+    }
+
 }
+
+[Serializable]
+public class NoteDataListWrapper
+{
+    public List<NoteData> NoteDataList;
+
+    public NoteDataListWrapper(List<NoteData> noteDataList)
+    {
+        NoteDataList = noteDataList;
+    }
+}
+
 
 [Serializable]
 public class RoomDataListWrapper
