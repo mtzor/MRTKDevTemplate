@@ -191,7 +191,7 @@ public class AppManager : MonoBehaviour
                 int exitCode = await TutorialManager.Instance.runTutorial();
 
                 Debug.Log("TUTORIAL ENDED CODE "+exitCode);
-                UpdatePhase(AppPhase.Role_Choice);
+                UpdatePhase(AppPhase.Name_Input);
 
                 break;
 
