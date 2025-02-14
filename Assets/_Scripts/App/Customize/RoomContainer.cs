@@ -9,27 +9,63 @@ public class RoomContainer : MonoBehaviour
     [SerializeField] private Transform spawnPos;
     [SerializeField] private int rotation;
 
-    // Start is called before the first frame update
+    [SerializeField] private Renderer buttonRenderer; // Reference to the button's renderer (for color change)
+
+    private Color defaultColor;// Default button color
+    [SerializeField] private Color highlightColor = Color.yellow; // Highlighted button color
+
     void Awake()
     {
-        
+        // Optionally, get the Renderer component if not assigned in the inspector
+        if (buttonRenderer == null)
+            buttonRenderer = GetComponent<Renderer>();
+
+
+        defaultColor= buttonRenderer.material.color;
     }
 
-  public void onRoomContainerBtnPressed()
+    public void onRoomContainerBtnPressed()
     {
-        //ASK THE LAYOUT MANAGER TO CLOSE PREVIOUS OPEN MENUS
-        //ASK LAYOUT MANAGER TO OPEN THIS MENU PASS THE IS DOUBLE PARAMETER AND THE POSITION PARAMETER
-
-        Debug.Log("CUSTOMIZE MANAGER " + CustomizeManager.Instance.name);
-
-        if (CustomizeManager.Instance.GetCurrentLayoutManager() == null)
+        // Ask the LayoutManager to close previous open menus and open the current one
+        if (CustomizeManager.Instance.GetCurrentLayoutManager() != null)
         {
+            Debug.Log($"SPAWN POS ROOM CONTAINER {spawnPos.position.x}, {spawnPos.position.y}, {spawnPos.position.z}");
 
-            Debug.Log("CUSTOMIZE MANAGER CURRENT LAYOUT MANAGER NULL" );
+            // Open menu and set this button as pressed
+            if (CustomizeManager.Instance.isCurrentLayoutManagerShared)
+            {
+                CustomizeManager.Instance.SharedLayoutManager().SetLastPressedButton(this);
+                CustomizeManager.Instance.SharedLayoutManager().OpenMenu(isDouble, spawnPos, rotation);
+            }
+            else
+            {
+                CustomizeManager.Instance.PrivateLayoutManager().SetLastPressedButton(this);
+                CustomizeManager.Instance.PrivateLayoutManager().OpenMenu(isDouble, spawnPos, rotation);
+            }
         }
-        Debug.Log("SPAWN POS ROOM CONTAINER" + spawnPos.position.x + spawnPos.position.y + spawnPos.position.z);
-        CustomizeManager.Instance.GetCurrentLayoutManager().OpenMenu(isDouble, spawnPos,rotation);
+        else
+        {
+            Debug.LogError("CustomizeManager has no current LayoutManager!");
+        }
+    }
 
-        Debug.Log("after open menu");
+    // Change button to highlight color
+    public void HighlightButton()
+    {
+        if (buttonRenderer != null)
+        {
+            buttonRenderer.material.color = highlightColor;
+        }
+    }
+
+    // Reset button to default color
+    public void ResetButton()
+    {
+        if (buttonRenderer != null)
+        {
+            buttonRenderer.material.color = defaultColor;
+        }
     }
 }
+
+

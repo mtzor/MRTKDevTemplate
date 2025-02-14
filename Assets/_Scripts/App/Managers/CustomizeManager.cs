@@ -24,7 +24,7 @@ public class CustomizeManager : NetworkBehaviour
 
     [SerializeField] private ModuleLayouts[] moduleLayouts = new ModuleLayouts[9];
 
-    [SerializeField]private LayoutManager privateLayoutManager;
+    [SerializeField]private PrivateLayoutManager privateLayoutManager;
     [SerializeField]private LayoutManager sharedLayoutManager;
 
     private CustomizePhase privatePhase;
@@ -34,7 +34,9 @@ public class CustomizeManager : NetworkBehaviour
     public int[] sharedChoices = new int[2];
 
 
-    public LayoutManager currentLayoutManager;// ???? public
+    public bool isCurrentLayoutManagerShared;// ???? public
+
+    public bool isCurrentLayoutManagerSet=false;// ???? public
     public string _selectedModule;
     public int selectedModuleIndex;
 
@@ -42,14 +44,17 @@ public class CustomizeManager : NetworkBehaviour
 
     public Dictionary<ulong, GameObject> PlayerObjects { get { return playerObjects; } set { playerObjects = value; } }
     public string SelectedModule { set => _selectedModule = value; }
-    public LayoutManager GetCurrentLayoutManager()
-    {    return currentLayoutManager; }
+    public bool GetCurrentLayoutManager()
+    {    return isCurrentLayoutManagerShared; }
 
     public void SetCurrentLayoutManager(bool isShared)
     {
-        currentLayoutManager = (isShared) ? sharedLayoutManager : privateLayoutManager;
+        isCurrentLayoutManagerShared = isShared;
+        isCurrentLayoutManagerSet = true;
     }
-    public LayoutManager PrivateLayoutManager(){return privateLayoutManager; }
+
+    public bool IsCurrentLayoutManagerShared() { return isCurrentLayoutManagerShared; }
+    public PrivateLayoutManager PrivateLayoutManager(){return privateLayoutManager; }
     public LayoutManager SharedLayoutManager() { return sharedLayoutManager; }
 
 
@@ -481,18 +486,6 @@ public override void OnNetworkSpawn()
         
     }
     
-    public void setLayoutManager(bool isShared)
-    {
-        if (!isShared)
-        {
-            currentLayoutManager = privateLayoutManager;
-        }
-        else
-        {
-            currentLayoutManager = sharedLayoutManager;
-        }
-    }
-
     public void ToggleLocalPlayer(bool value)
     {
         // Check if this is the local client

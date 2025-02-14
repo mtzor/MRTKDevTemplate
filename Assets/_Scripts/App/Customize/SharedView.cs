@@ -202,14 +202,21 @@ public class SharedView : NetworkBehaviour, IView
 
             if (CustomizeManager.Instance.SharedPhase == CustomizeManager.CustomizePhase.Customize_layout)
             {
-                CustomizeManager.Instance.currentLayoutManager.RespawnAllRooms();
 
+                if (CustomizeManager.Instance.isCurrentLayoutManagerShared)
+                {
+                    CustomizeManager.Instance.SharedLayoutManager().RespawnAllRooms();
+                }
+                else
+                {
+                    CustomizeManager.Instance.PrivateLayoutManager().RespawnAllRooms();
+                }
             }
 
             if (CustomizeManager.Instance.SharedPhase == CustomizeManager.CustomizePhase.Customize_layout)
                 {
-                currentItem.transform.localPosition = new Vector3(0.51f, 0.331f, 0.394f);
-                currentItem.transform.localRotation = Quaternion.Euler(-40f, 0f, 0f);
+                currentItem.transform.localPosition = new Vector3(0.51f, 0.1f, 0.394f);
+                currentItem.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
                 currentItem.transform.localScale = new Vector3(0.02f, 0.02f, 0.02f);
             }
 
@@ -328,7 +335,14 @@ public class SharedView : NetworkBehaviour, IView
 
         if (CustomizeManager.Instance.SharedPhase == CustomizeManager.CustomizePhase.Customize_layout)
         {
-            CustomizeManager.Instance.currentLayoutManager.DespawnAllRooms();
+            if (CustomizeManager.Instance.isCurrentLayoutManagerShared)
+            {
+                CustomizeManager.Instance.SharedLayoutManager().DespawnAllRooms();
+            }
+            else
+            {
+                CustomizeManager.Instance.PrivateLayoutManager().DespawnAllRooms();
+            }
             Destroy(currentItem.gameObject);
         }
         //spawning loading screen for shared clients
@@ -389,7 +403,14 @@ public class SharedView : NetworkBehaviour, IView
                 if (CustomizeManager.Instance.SharedPhase== CustomizeManager.CustomizePhase.Customize_layout)
                 {
                     ShowCurrentItem();
-                    CustomizeManager.Instance.currentLayoutManager.RespawnAllRooms();
+                    if (CustomizeManager.Instance.isCurrentLayoutManagerShared)
+                    {
+                        CustomizeManager.Instance.SharedLayoutManager().RespawnAllRooms();
+                    }
+                    else
+                    {
+                        CustomizeManager.Instance.PrivateLayoutManager().RespawnAllRooms();
+                    }
                 }
             }
             else 
@@ -435,8 +456,19 @@ public class SharedView : NetworkBehaviour, IView
             CustomizeManager.Instance.ToggleCustomize_P1_UI(false);
             if(CustomizeManager.Instance.SharedPhase== CustomizeManager.CustomizePhase.Customize_layout)
             {
-                CustomizeManager.Instance.currentLayoutManager.DespawnAllRooms();
-                Destroy(currentItem.gameObject);
+                if (CustomizeManager.Instance.isCurrentLayoutManagerShared)
+                {
+                    CustomizeManager.Instance.SharedLayoutManager().DespawnAllRooms();
+                }
+                else
+                {
+                    CustomizeManager.Instance.PrivateLayoutManager().DespawnAllRooms();
+                }
+
+                if (currentItem != null)
+                {
+                    Destroy(currentItem.gameObject);
+                }
             }
         }
     }

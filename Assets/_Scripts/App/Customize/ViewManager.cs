@@ -98,9 +98,16 @@ public class ViewManager : MonoBehaviour
 
         isShared = !isShared;
 
-        if (CustomizeManager.Instance.currentLayoutManager != null)
+        if (CustomizeManager.Instance.isCurrentLayoutManagerSet)
         {
-            CustomizeManager.Instance.currentLayoutManager.CloseOpenMenu();
+            if(CustomizeManager.Instance.isCurrentLayoutManagerShared)
+            {
+                CustomizeManager.Instance.SharedLayoutManager().CloseOpenMenu();
+            }
+            else
+            {
+                CustomizeManager.Instance.PrivateLayoutManager().CloseOpenMenu();
+            }
         }
 
         // Handle view switch externally if necessary
@@ -264,9 +271,16 @@ public class ViewManager : MonoBehaviour
 
                         //CustomizeManager.Instance.PrivatePhase = CustomizeManager.CustomizePhase.Customize_layout;
                         //layout manager save the current design
-
-                        CustomizeManager.Instance.currentLayoutManager.DespawnAllRooms();
-                        CustomizeManager.Instance.currentLayoutManager.FinalizeCurrentLayout();
+                        if (CustomizeManager.Instance.isCurrentLayoutManagerShared)
+                        {
+                            CustomizeManager.Instance.SharedLayoutManager().DespawnAllRooms();
+                            CustomizeManager.Instance.SharedLayoutManager().FinalizeCurrentLayout();
+                        }
+                        else
+                        {
+                            CustomizeManager.Instance.PrivateLayoutManager().DespawnAllRooms();
+                            CustomizeManager.Instance.PrivateLayoutManager().FinalizeCurrentLayout();
+                        }
                     }
 
                     if (isSharedComplete && isPrivateComplete)
@@ -277,6 +291,7 @@ public class ViewManager : MonoBehaviour
                         CustomizeManager.Instance.ToggleCustomize_P2_UI(false);
                         LoadingManager.Instance.DisableLoadingScreen();
                         Debug.Log("BOTH VIEWS COMPLETE");
+
                     }
                 }
 
@@ -342,8 +357,17 @@ public class ViewManager : MonoBehaviour
 
                         //CustomizeManager.Instance.PrivatePhase = CustomizeManager.CustomizePhase.Customize_layout;
                         //layout manager save the current design
-                        CustomizeManager.Instance.currentLayoutManager.DespawnAllRooms();
-                        CustomizeManager.Instance.currentLayoutManager.FinalizeCurrentLayout();
+
+                        if (CustomizeManager.Instance.isCurrentLayoutManagerShared)
+                        {
+                            CustomizeManager.Instance.SharedLayoutManager().DespawnAllRooms();
+                            CustomizeManager.Instance.SharedLayoutManager().FinalizeCurrentLayout();
+                        }
+                        else
+                        {
+                            CustomizeManager.Instance.PrivateLayoutManager().DespawnAllRooms();
+                            CustomizeManager.Instance.PrivateLayoutManager().FinalizeCurrentLayout();
+                        }
                         Debug.Log("IS PRIVATE NOT COMPLETE->COMPLETE");
                     }
 

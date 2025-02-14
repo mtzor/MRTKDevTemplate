@@ -33,7 +33,7 @@ public class InteractableModule : NetworkBehaviour
         localPlayerColor= LobbyManager.Instance.GetPlayerColor();
 
         Debug.Log("LOCAL PLAYER COLOR"+localPlayerColor);
-        Debug.Log("Player ID"+ NetworkManager.Singleton.LocalClientId +"PlayerName: "+ LobbyManager.Instance.GetPlayerData((int)NetworkManager.Singleton.LocalClientId).playerName);
+        Debug.Log("Player ID"+ NetworkManager.Singleton.LocalClientId +"PlayerName: "+ LobbyManager.Instance.GetPlayerData().playerName);
     }
 
 
@@ -73,7 +73,7 @@ public class InteractableModule : NetworkBehaviour
             // Calculate the spawn position based on the module's position and offset
             Vector3 spawnPosition = modulePosition.position + handOffset;
 
-            localPlayerColor = LobbyManager.Instance.GetPlayerData((int)NetworkManager.Singleton.LocalClientId).Color;
+            localPlayerColor = LobbyManager.Instance.GetPlayerData().Color;
 
             Debug.Log("LocalPlayerColor:" + localPlayerColor + "player ID:" + storedPlayerID);
 

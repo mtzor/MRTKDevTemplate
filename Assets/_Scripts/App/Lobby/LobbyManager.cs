@@ -123,13 +123,15 @@ public class LobbyManager : MonoBehaviour {
 
     #region Load/Store PlayerName
 
-    public PlayerDataScriptable GetPlayerData(int playerID)
+    public PlayerDataScriptable GetPlayerData()
     {
-        return playerDatas[playerID];   
+        return playerDatas[currPlayer];   
     }
 
     public void SetPlayerColor(Color colorIndex)
-    {
+    { 
+
+        _playerID = currPlayer;
         playerDatas[_playerID].Color=colorIndex;
     }
     public Color GetPlayerColor()
@@ -661,6 +663,36 @@ public string GetPlayerInfo()
             Debug.LogError("Only the lobby host can close the lobby.");
         }
     }
+    private string lastPlayerName;
+    public void SignOut()
+    {
+        if (AuthenticationService.Instance.IsSignedIn)
+        {
+            Debug.Log("Signing out...");
+            AuthenticationService.Instance.SignOut();
+            lastPlayerName = playerName; // Save the current player name
+            playerName = null; // Reset current player name
+            joinedLobby = null; // Clear joined lobby
+            Debug.Log("Player signed out.");
+        }
+        else
+        {
+            Debug.LogWarning("Player is not signed in.");
+        }
+    }
 
+    public async void SignInAgain()
+    {
+        if (string.IsNullOrEmpty(lastPlayerName))
+        {
+            Debug.LogError("No previous player name stored. Cannot reauthenticate.");
+            return;
+        }
+
+        Debug.Log($"Signing in again with name: {lastPlayerName}");
+        await Authenticate(lastPlayerName);
+
+        Debug.Log("Player signed in again successfully.");
+    }
 
 }

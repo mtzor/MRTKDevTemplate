@@ -11,6 +11,13 @@ public class RoomBtn : MonoBehaviour
 
     public void onRoomBtnPressed()
     {
-        CustomizeManager.Instance.GetCurrentLayoutManager().SpawnRoom(id);
+        if (CustomizeManager.Instance.isCurrentLayoutManagerShared)
+        {
+            CustomizeManager.Instance.SharedLayoutManager().SpawnRoom(id);
+        }
+        else
+        {
+            CustomizeManager.Instance.PrivateLayoutManager().SpawnRoom(id);
+        }
     }
 }

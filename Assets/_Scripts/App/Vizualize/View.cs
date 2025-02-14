@@ -44,6 +44,7 @@ public class View : MonoBehaviour, IView
         Debug.Log("GIVEN ITEMS LENGTH" + items.Count);
         this.items = items;
         VisualizeManager.Instance.SetSpawnedRoomData(currentIndex);
+        ToggleNextPrevBtns();
 
     }
     public List<ulong> SharedClients()
@@ -63,18 +64,45 @@ public class View : MonoBehaviour, IView
     }
     public void NextItem()
     {
-        currentIndex = (currentIndex + 1) % items.Count; // Circular navigation
+        if (currentIndex < items.Count - 1)
+        {
+            currentIndex = (currentIndex + 1);
+        }
         Debug.Log("Next item" + currentIndex);
         VisualizeManager.Instance.SetSpawnedRoomData(currentIndex);
         ShowCurrentItem();
+        ToggleNextPrevBtns();
     }
 
     public void PreviousItem()
     {
-        currentIndex = (currentIndex - 1 + items.Count) % items.Count; // Circular navigation
+        if (currentIndex > 0)
+        {
+            currentIndex = (currentIndex - 1);
+        }
         Debug.Log("previous item" + currentIndex);
         VisualizeManager.Instance.SetSpawnedRoomData(currentIndex);
         ShowCurrentItem();
+        ToggleNextPrevBtns();
+
+    }
+
+    public void ToggleNextPrevBtns()
+    {
+        if (currentIndex == 0)
+        {
+            VisualizeManager.Instance.UIController().TogglePreviousBtn(false);
+            VisualizeManager.Instance.UIController().ToggleNextBtn(true);
+        }
+        else if (currentIndex > 0 && currentIndex < items.Count - 1) {
+            VisualizeManager.Instance.UIController().TogglePreviousBtn(true);
+            VisualizeManager.Instance.UIController().ToggleNextBtn(true);
+        }
+        else
+        {
+            VisualizeManager.Instance.UIController().TogglePreviousBtn(true);
+            VisualizeManager.Instance.UIController().ToggleNextBtn(false);
+        }
     }
     public void DestroyCurrentItem()
     {
@@ -119,8 +147,8 @@ public class View : MonoBehaviour, IView
 
         if (VisualizeManager.Instance.CurrentPhase == VisualizeManager.VizualizePhase.Vizualize_layout)
         {
-            currentItem.transform.localPosition = new Vector3(0.51f, 0.331f, 0.394f);
-            currentItem.transform.localRotation = Quaternion.Euler(-40f, 0f, 0f);
+            currentItem.transform.localPosition = new Vector3(0.51f, 0.1f, 0.394f);
+            currentItem.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
             currentItem.transform.localScale = new Vector3(0.02f, 0.02f, 0.02f);
         }
 
@@ -156,7 +184,7 @@ public class View : MonoBehaviour, IView
             VisualizeManager.Instance.RespawnAllRooms();
         }
          Debug.Log("NEGATIVE");
-         VisualizeManager.Instance.UIController.EnableConfirmButton();
+         VisualizeManager.Instance.UIController().EnableConfirmButton();
          selectedIndex = -1;
         
     }

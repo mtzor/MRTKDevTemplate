@@ -14,6 +14,8 @@ public class PlayerController : NetworkBehaviour
     public List<Renderer> bodyPartRenderers;
     public GameObject body;
 
+    public Renderer faceRenderer;
+
     private Vector3 lastPosition;
     private Quaternion lastRotation;
     private int frameCounter = 0;
@@ -31,6 +33,13 @@ public class PlayerController : NetworkBehaviour
             // Register the player object
             ulong clientId = NetworkManager.Singleton.LocalClientId;
             CustomizeManager.Instance.PlayerObjects[clientId] = gameObject;
+
+            Debug.Log("Local client ID" + NetworkManager.Singleton.LocalClientId + " COLOR" + LobbyManager.Instance.GetPlayerData().Color);
+            defaultColor = LobbyManager.Instance.GetPlayerData().Color;
+            RequestChangeColorServerRpc(defaultColor); // Initialize the NetworkVariable
+
+            UpdateMeshRenderer(false);
+            
         }
     }
 
@@ -38,8 +47,8 @@ public class PlayerController : NetworkBehaviour
     {
         if (IsOwner)
         {
-            Debug.Log("Local client ID" + NetworkManager.Singleton.LocalClientId + " COLOR" + LobbyManager.Instance.GetPlayerData((int)NetworkManager.Singleton.LocalClientId).Color);
-            defaultColor = LobbyManager.Instance.GetPlayerData((int)NetworkManager.Singleton.LocalClientId).Color;
+            Debug.Log("Local client ID" + NetworkManager.Singleton.LocalClientId + " COLOR" + LobbyManager.Instance.GetPlayerData().Color);
+            defaultColor = LobbyManager.Instance.GetPlayerData().Color;
             RequestChangeColorServerRpc(defaultColor); // Initialize the NetworkVariable
         }
 
@@ -86,6 +95,7 @@ public class PlayerController : NetworkBehaviour
         if (IsOwner)
         {
             RotateBodyAndHead();
+            HandManager.Instance.RotateHandsWithPlayer(NetworkManager.Singleton.LocalClientId, transform.rotation);
         }
     }
 
@@ -125,14 +135,14 @@ public class PlayerController : NetworkBehaviour
     }
 
     // Server RPC to request a color change
-    [ServerRpc]
+    [ServerRpc(RequireOwnership =false)]
     private void RequestChangeColorServerRpc(Color newColor, ServerRpcParams rpcParams = default)
     {
         playerColor.Value = newColor; // Update color network variable
     }
 
     // Server RPC to request an iridescent effect change
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     private void RequestIridescentChangeServerRpc(bool enableIridescent, ServerRpcParams rpcParams = default)
     {
         isIridescent.Value = enableIridescent;
@@ -165,6 +175,15 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
+    private void UpdateMeshRenderer(bool isOn)
+    {
+        foreach (var renderer in bodyPartRenderers)
+        {
+            renderer.GetComponent<MeshRenderer>().enabled = isOn;
+            faceRenderer.GetComponent<MeshRenderer>().enabled=isOn;
+        }
+    }
+
     private void OnDestroy()
     {
         playerColor.OnValueChanged -= OnPlayerColorChanged;
@@ -174,5 +193,10 @@ public class PlayerController : NetworkBehaviour
     public void ToggleBody(bool value)
     {
         body.SetActive(value);
+    }
+
+    public Quaternion GetPlayerAvatarRotation()
+    {
+        return this.transform.rotation;
     }
 }

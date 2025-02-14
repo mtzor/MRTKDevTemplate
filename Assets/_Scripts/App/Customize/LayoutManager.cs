@@ -22,6 +22,8 @@ public class LayoutManager : NetworkBehaviour
     [SerializeField] Transform[] furniturePrefabs;
 
     private GameObject openMenu;
+    private RoomContainer lastPressedButton;
+
     public NetworkVariable<Vector3> spawnPos = new NetworkVariable<Vector3>(new Vector3(0f, 0f, 0f), NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     public NetworkVariable<int> spawnRotY = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
@@ -52,12 +54,24 @@ public class LayoutManager : NetworkBehaviour
     {
         roomLayout = layout;
     }
+    public void SetLastPressedButton(RoomContainer newButton)
+    {
+        // Reset the appearance of the last pressed button
+        if (lastPressedButton != null)
+        {
+            lastPressedButton.ResetButton();
+        }
 
+        // Update the last pressed button and highlight it
+        lastPressedButton = newButton;
+        lastPressedButton.HighlightButton();
+    }
     public void CloseOpenMenu()
     {
         if (openMenu != null)
         {
             openMenu.gameObject.SetActive(false);
+            lastPressedButton.ResetButton();
         }
     }
 
@@ -145,56 +159,64 @@ public class LayoutManager : NetworkBehaviour
             return;
         }
 
-        if (!isShared)
+        // Request the server to handle spawning and overlapping
+        RequestSpawnRoomServerRpc(id, spawnPos.Value, spawnRotY.Value);
+
+        CloseOpenMenu();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RequestSpawnRoomServerRpc(int id, Vector3 position, int rotationY)
+    {
+        // Check for overlapping room on the server
+        GameObject overlappingRoom = _spawnedRooms.FirstOrDefault(room =>
         {
-            // Check for overlapping room based on name and position
-            RoomData overlappingRoomData = _spawnedRoomData.FirstOrDefault(roomData =>
-            {
-                return roomData.IsAtSamePosition(spawnPos.Value) ;
-            });
+            return Vector3.Distance(room.transform.position, position) < DISTANCE_THRESHOLD;
+        });
 
-            GameObject overlappingRoom = _spawnedRooms.FirstOrDefault(room =>
-            {
-                return Vector3.Distance(room.transform.position, spawnPos.Value) < DISTANCE_THRESHOLD;
-            });
+        // If overlap is detected, destroy the overlapping room on all clients
+        if (overlappingRoom != null)
+        {
+            ulong overlappingRoomId = overlappingRoom.GetComponent<NetworkObject>().NetworkObjectId;
+            DestroyOverlappingRoomClientRpc(overlappingRoomId);
+        }
 
-            // If overlap is detected, remove the overlapping room
-            if (overlappingRoom != null)
-            {
-                // Remove from both lists
-                _spawnedRooms.Remove(overlappingRoom);
+        // Spawn the new room on the server
+        Transform spawnedRoom = Instantiate(roomPrefabs[id]);
+        spawnedRoom.position = position;
+        spawnedRoom.rotation = Quaternion.Euler(roomPrefabs[id].transform.rotation.x, rotationY, roomPrefabs[id].transform.rotation.z);
+        spawnedRoom.localScale = roomPrefabs[id].localScale;
 
-                // Find the corresponding RoomData and remove it
-                if (overlappingRoomData != null)
-                {
-                    _spawnedRoomData.Remove(overlappingRoomData);
-                }
+        TransformRoom(spawnedRoom);
 
-                // Destroy the overlapping room
-                Destroy(overlappingRoom);
-            }
+        // Add the newly spawned room to the server's lists
+        _spawnedRoomData.Add(new RoomData(spawnedRoom.gameObject));
+        _spawnedRooms.Add(spawnedRoom.gameObject);
 
-            // Spawn the new room
-            Transform spawnedRoom = Instantiate(roomPrefabs[id]);
-            spawnedRoom.position = spawnPos.Value;
-            spawnedRoom.rotation = Quaternion.Euler(roomPrefabs[id].transform.rotation.x, spawnRotY.Value, roomPrefabs[id].transform.rotation.z);
-            spawnedRoom.localScale = roomPrefabs[id].localScale;
+        // Spawn the room on the network
+        spawnedRoom.GetComponent<NetworkObject>().Spawn(true);
 
-            TransformRoom(spawnedRoom);
+        // Notify clients to add the new room to their lists
+        AddRoomDataClientRpc(new RoomData(spawnedRoom.gameObject));
+    }
 
-            // Add the newly spawned room to both lists
-            _spawnedRoomData.Add(new RoomData(spawnedRoom.gameObject));
-            _spawnedRooms.Add(spawnedRoom.gameObject);
-
-            openMenu.SetActive(false);
+    [ClientRpc(RequireOwnership =false)]
+    private void DestroyOverlappingRoomClientRpc(ulong networkObjectId)
+    {
+        if (NetworkManager.SpawnManager.SpawnedObjects.TryGetValue(networkObjectId, out NetworkObject netObject))
+        {
+            GameObject overlappingRoom = netObject.gameObject;
+            _spawnedRoomData.RemoveAll(roomData => roomData.IsAtSamePosition(overlappingRoom.transform.position));
+            _spawnedRooms.RemoveAll(room => room == overlappingRoom);
+            Destroy(overlappingRoom);
         }
         else
         {
-            // Handle server-side spawning
-            SpawnRoomForSharedClientsServerRPC(id);
+            Debug.LogError($"Failed to find NetworkObject with ID: {networkObjectId}");
         }
     }
 
+  
     public void TransformRoom(Transform room)
     {
         // Scale the room
@@ -208,15 +230,15 @@ public class LayoutManager : NetworkBehaviour
 
         if (Mathf.Approximately(normalizedYRotation, 180f) || Mathf.Approximately(normalizedYRotation, -180f))
         {
-            room.rotation = Quaternion.Euler(40, currentRotation.y, currentRotation.z);
+            room.rotation = Quaternion.Euler(currentRotation.x, currentRotation.y, currentRotation.z);
         }
         else if (Mathf.Approximately(normalizedYRotation, 90f))
         {
-            room.rotation = Quaternion.Euler(currentRotation.x, currentRotation.y, -40);
+            room.rotation = Quaternion.Euler(currentRotation.x, currentRotation.y, currentRotation.z);
         }
         else if (Mathf.Approximately(normalizedYRotation, -90f))
         {
-            room.rotation = Quaternion.Euler(currentRotation.x, currentRotation.y, 40);
+            room.rotation = Quaternion.Euler(currentRotation.x, currentRotation.y, currentRotation.z);
         }
     }
 
@@ -242,7 +264,7 @@ public class LayoutManager : NetworkBehaviour
             _spawnedRooms.Add(room);
             if (openMenu != null)
             {
-                openMenu.gameObject.SetActive(false);
+                CloseOpenMenu();
             }
         }
 
@@ -367,6 +389,8 @@ public class LayoutManager : NetworkBehaviour
 
     public void FinalizeCurrentLayout()
     {
+        CloseOpenMenu();
+
         if (isShared)
         {
             SaveRoomDataServerRPC(null, CustomizeManager.Instance.sharedChoices);

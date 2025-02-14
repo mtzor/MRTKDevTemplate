@@ -45,7 +45,7 @@ public class VisualizeManager : NetworkBehaviour
     public int selectedModuleIndex;
     public string SelectedModule { set => _selectedModule = value; }
 
-    public VisualizeViewUIController UIController { get; }
+    public VisualizeViewUIController UIController() { return uiController; }
     public View View {  get { return view; } }
 
     public override void OnNetworkSpawn()
@@ -214,6 +214,9 @@ public class VisualizeManager : NetworkBehaviour
 
                 // Add the respawned room to the spawnedRooms list
                 _spawnedRooms.Add(roomObject.gameObject);
+
+                roomObject.transform.SetParent(visualize_P1_UI.transform);
+
             }
         }
 
@@ -247,6 +250,14 @@ public class VisualizeManager : NetworkBehaviour
     public async void SubmitRatings()
     {
         await SaveSystem.SaveDesignRatingAsync(LobbyManager.Instance.GetPlayerName(),_selectedModule,ratings);
-        MainMenu();
+
+        Application.Quit();
+
+        #if UNITY_EDITOR
+                // If running in the Unity Editor, stop playing the scene
+                UnityEditor.EditorApplication.isPlaying = false;
+        #endif
+    
+    MainMenu();
     }
 }

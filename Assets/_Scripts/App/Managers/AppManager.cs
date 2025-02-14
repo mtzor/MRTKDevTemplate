@@ -431,9 +431,11 @@ public class AppManager : MonoBehaviour
                 await Task.Delay(5000);
 
                 LoadingManager.Instance.DisableLoadingScreen();
-
-                UpdatePhase(AppPhase.MainMenu);
-
+                #if UNITY_EDITOR
+                                // If running in the Unity Editor, stop playing the scene
+                                UnityEditor.EditorApplication.isPlaying = false;
+                #endif
+                
                 //TriggerAppPhaseChange();
 
                 break;
@@ -561,7 +563,11 @@ public class AppManager : MonoBehaviour
         }
         else if (currentPhase == AppManager.AppPhase.Customize_P2)
         {
-            UpdatePhase(AppPhase.MainMenu);
+            LoadingManager.Instance.DisableLoadingScreen();
+#if UNITY_EDITOR
+            // If running in the Unity Editor, stop playing the scene
+            UnityEditor.EditorApplication.isPlaying = false;
+#endif
         }
     }
     
@@ -582,33 +588,15 @@ public class AppManager : MonoBehaviour
 
     public void FinalizeColorBtnPressed()
     {
-        FinalizeColorAsync();
+        colorInputUI.SetActive(false);
+        UpdatePhase(AppPhase.Role_Choice);
     }
-    public async Task FinalizeColorAsync()
-    {
-        DialogButtonType result2 = await ConfirmColor();
-
-        if (result2 == DialogButtonType.Positive)
-        {
-            colorInputUI.SetActive(false);
-            UpdatePhase(AppPhase.Role_Choice);//calling update phase for the tutorial
-        }
-        else
-        {
-            UpdatePhase(AppPhase.Color_Input);//calling update phase for the tutorial
-        }
-    }
-    public async Task<DialogButtonType> ConfirmColor()
-    {
-        DialogButtonType result = await DialogManager.Instance.SpawnDialogWithAsync("Color chosen.", "Would you like to confirm your your choice?", "YES", "NO");
-
-        return result;
-    }
+   
 
     public async Task<DialogButtonType> RoleChoice()
     {
 
-        DialogButtonType result = await DialogManager.Instance.SpawnDialogWithAsync("Chose your role.", "Are you a non expert user or an expert user (architect, ciivil engineer) ?", "EXPERT", "NON-EXPERT");
+        DialogButtonType result = await DialogManager.Instance.SpawnDialogWithAsync("Chose your role.", "Are you a non expert user or an expert user (architect, civil engineer) ?", "EXPERT", "NON-EXPERT");
         return result;
     }
     public void TutorialComplete()

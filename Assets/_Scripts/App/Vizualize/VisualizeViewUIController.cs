@@ -51,5 +51,18 @@ public class VisualizeViewUIController : NetworkBehaviour
 
     public void EnableConfirmButton() { confirmButton.gameObject.SetActive(true);}
 
+    public void ToggleNextBtn(bool value)
+    {
+        nextItemButton.gameObject.SetActive(value);
+    }
 
+    public void TogglePreviousBtn(bool value)
+    {
+        previousItemButton.gameObject.SetActive(value);
+    }
+
+    public void ConfirmBtnToggle(bool value)
+    {
+        confirmButton.gameObject.SetActive(value);
+    }  
 }

@@ -27,19 +27,17 @@ public class CloseButtonLogic : MonoBehaviour
 
         if(choice == DialogButtonType.Positive)
         {
-
-            // If we are running in a standalone build of the game
-            #if UNITY_STANDALONE
-                    Application.Quit();
-            #endif
-
-                        // If we are running in the editor
-            #if UNITY_EDITOR
-                        UnityEditor.EditorApplication.isPlaying = false;
-            #endif
+            LoadingManager.Instance.DisableLoadingScreen();
+#if UNITY_EDITOR
+            // If running in the Unity Editor, stop playing the scene
+            UnityEditor.EditorApplication.isPlaying = false;
+#endif
         }
+        else
+        {
 
-        UIManager.Instance.Show("MainMenu");
+            UIManager.Instance.Show("MainMenu");
+        }
 
     }
 }
